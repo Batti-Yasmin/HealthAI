@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HealthAI - Intelligent Healthcare Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>HealthAI - Intelligent Healthcare Assistant</h1>
+
+        <!-- 1. Chat System -->
+        <section>
+            <h2>🧠 Patient Chat</h2>
+            <label>Ask a health question:</label>
+            <input type="text" id="chatInput">
+            <button onclick="askChat()">Ask</button>
+            <div id="chatResponse" class="response-box"></div>
+        </section>
+
+        <!-- 2. Symptom Identifier -->
+        <section>
+            <h2>🩺 Symptom Identifier</h2>
+            <label>Enter symptoms:</label>
+            <textarea id="symptomsInput"></textarea>
+            <button onclick="predictDisease()">Predict</button>
+            <div id="predictResponse" class="response-box"></div>
+        </section>
+
+        <!-- 3. Home Remedies -->
+        <section>
+            <h2>🌿 Home Remedies</h2>
+            <label>Enter your condition:</label>
+            <input type="text" id="remedyInput">
+            <button onclick="getRemedy()">Get Remedy</button>
+            <div id="remedyResponse" class="response-box"></div>
+        </section>
+
+        <!-- 4. Treatment Plan Generator -->
+        <section>
+            <h2>💊 Treatment Plan</h2>
+            <label>Condition:</label>
+            <input type="text" id="condition">
+            <label>Age:</label>
+            <input type="number" id="age">
+            <label>Gender:</label>
+            <select id="gender">
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+            <label>Existing Conditions:</label>
+            <input type="text" id="existing">
+            <button onclick="generateTreatment()">Generate Plan</button>
+            <div id="treatmentResponse" class="response-box"></div>
+        </section>
+
+        <!-- 5. Health Analytics -->
+        <section>
+            <h2>📊 Health Analytics</h2>
+            <button onclick="loadAnalytics()">Load My Health Metrics</button>
+            <div id="analyticsData" class="response-box"></div>
+        </section>
+
+        <!-- 6. Profile Management -->
+        <section>
+            <h2>👤 Patient Profile</h2>
+            <label>Name:</label><input id="pname">
+            <label>Age:</label><input id="page" type="number">
+            <label>Gender:</label><input id="pgender">
+            <label>Conditions:</label><input id="pconditions">
+            <label>Allergies:</label><input id="pallergies">
+            <button onclick="updateProfile()">Update Profile</button>
+            <div id="profileResponse" class="response-box"></div>
+        </section>
+    </div>
+
+    <script>
+        async function askChat() {
+            const message = document.getElementById("chatInput").value;
+            const res = await fetch("/chat", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({message})
+            });
+            const data = await res.json();
+            document.getElementById("chatResponse").innerText = data.response;
+        }
+
+        async function predictDisease() {
+            const symptoms = document.getElementById("symptomsInput").value;
+            const res = await fetch("/predict", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({symptoms})
+            });
+            const data = await res.json();
+            document.getElementById("predictResponse").innerText = data.prediction;
+        }
+
+        async function getRemedy() {
+            const condition = document.getElementById("remedyInput").value;
+            const res = await fetch("/remedies", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({condition})
+            });
+            const data = await res.json();
+            document.getElementById("remedyResponse").innerText = data.remedies;
+        }
+
+        async function generateTreatment() {
+            const condition = document.getElementById("condition").value;
+            const age = document.getElementById("age").value;
+            const gender = document.getElementById("gender").value;
+            const existing_conditions = document.getElementById("existing").value;
+            const res = await fetch("/treatment", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({condition, age, gender, existing_conditions})
+            });
+            const data = await res.json();
+            document.getElementById("treatmentResponse").innerText = data.treatment_plan;
+        }
+
+        async function loadAnalytics() {
+            const res = await fetch("/analytics");
+            const data = await res.json();
+            document.getElementById("analyticsData").innerText =
+                JSON.stringify(data.data, null, 2) + "\n\nInsights:\n" + data.insights;
+        }
+
+        async function updateProfile() {
+            const name = document.getElementById("pname").value;
+            const age = parseInt(document.getElementById("page").value);
+            const gender = document.getElementById("pgender").value;
+            const conditions = document.getElementById("pconditions").value;
+            const allergies = document.getElementById("pallergies").value;
+            const res = await fetch("/profile", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({name, age, gender, conditions, allergies})
+            });
+            const data = await res.json();
+            document.getElementById("profileResponse").innerText = data.message;
+        }
+    </script>
+</body>
+</html>
