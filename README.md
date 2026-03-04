@@ -10,7 +10,7 @@ HealthAI is an AI-powered health assistant built using Python and Generative AI 
 - Streamlit / Gradio   
 - Hugging Face Spaces 
 
-
+🚀 **Live Demo:** https://healthai-assistant-healthai.hf.space/
 
 🔄 Project Workflow
 ---
